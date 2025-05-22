@@ -6,6 +6,12 @@ if ! command -v AtomicParsley &>/dev/null; then
     exit 1
 fi
 
+# 检查是否安装了 uuidgen
+if ! command -v uuidgen &>/dev/null; then
+    echo "❌ uuidgen 未安装，请先安装后再运行。"
+    exit 1
+fi
+
 # 判断当前目录下是否有 mp4 文件
 mp4_count=$(ls *.mp4 2>/dev/null | wc -l)
 if [ "$mp4_count" -eq 0 ]; then
