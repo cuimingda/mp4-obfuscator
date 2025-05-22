@@ -4,6 +4,14 @@
 
 ## Install
 
+安装AtomicParsley
+
+```shell
+brew install atomicparsley
+```
+
+配置
+
 ```shell
 ln -s "$(pwd)/mp4-obfuscator.sh" /usr/local/bin/
 ```
