@@ -10,6 +10,7 @@
 brew install atomicparsley
 ```
 
+确保系统中提供 `uuidgen` 命令（在大多数 Linux 发行版中属于 util-linux 包，macOS 默认自带）。
 配置
 
 ```shell
