@@ -6,6 +6,11 @@ if ! command -v AtomicParsley &>/dev/null; then
     exit 1
 fi
 
+if ! command -v ffmpeg &>/dev/null; then
+    echo "❌ ffmpeg 未安装，请先安装后再运行。"
+    exit 1
+fi
+
 # 检查是否安装了 uuidgen
 if ! command -v uuidgen &>/dev/null; then
     echo "❌ uuidgen 未安装，请先安装后再运行。"
@@ -20,9 +25,18 @@ if [ "$mp4_count" -eq 0 ]; then
 fi
 
 # 遍历当前目录下所有 .mp4 文件
-find . -maxdepth 1 -name '*.mp4' -print0 | \
-    while IFS= read -r -d '' file; do
-    file=$(basename "$file")
+# 使用简单的 for 循环遍历 mp4 文件
+for filepath in ./*.mp4; do
+    # 检查文件是否存在（防止没有匹配文件时的问题）
+    [ -f "$filepath" ] || continue
+
+    # 输出原始文件路径
+    echo "[调试] 原始文件路径: $filepath"
+
+    # 提取文件名
+    file=$(basename "$filepath")
+    # 输出提取后的文件名
+    echo "[调试] 提取后的文件名: $file"
 
     # 先用 ffmpeg 重新封装，确保 mp4 结构无问题
 
