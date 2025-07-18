@@ -22,8 +22,18 @@ fi
 # 遍历当前目录下所有 .mp4 文件
 find . -maxdepth 1 -name '*.mp4' -print0 | \
     while IFS= read -r -d '' file; do
-    # 去掉前缀 ./
-    file=${file#./}
+    file=$(basename "$file")
+
+    # 先用 ffmpeg 重新封装，确保 mp4 结构无问题
+
+    cleaned_tmpfile="${file%.mp4}_cleaned.mp4"
+    echo "[调试] 即将执行: ffmpeg -i '$file' -c copy -movflags faststart '$cleaned_tmpfile' -y -loglevel error"
+    ffmpeg -i "$file" -c copy -movflags faststart "$cleaned_tmpfile" -y -loglevel error
+    if [ ! -f "$cleaned_tmpfile" ]; then
+        echo "❌ $file ffmpeg 封装失败，跳过此文件"
+        continue
+    fi
+    mv "$cleaned_tmpfile" "$file"
 
     # 生成一个随机 UUID 作为 comment 内容
     rand_comment=$(uuidgen)
