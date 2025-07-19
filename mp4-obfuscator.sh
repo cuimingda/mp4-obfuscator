@@ -1,4 +1,9 @@
+
 #!/bin/bash
+
+# 记录开始时间
+start_time=$(date +"%Y-%m-%d %H:%M:%S")
+start_ts=$(date +%s)
 
 # 检查是否安装了 AtomicParsley
 if ! command -v AtomicParsley &>/dev/null; then
@@ -24,11 +29,19 @@ if [ "$mp4_count" -eq 0 ]; then
     exit 0
 fi
 
+total_files=0
+success_files=0
+
 # 遍历当前目录下所有 .mp4 文件
-# 使用简单的 for 循环遍历 mp4 文件
 for filepath in ./*.mp4; do
+
     # 检查文件是否存在（防止没有匹配文件时的问题）
     [ -f "$filepath" ] || continue
+    total_files=$((total_files + 1))
+
+    # 单文件处理开始时间
+    file_start_time=$(date +"%Y-%m-%d %H:%M:%S")
+    file_start_ts=$(date +%s)
 
     # 输出原始文件路径
     echo "[调试] 原始文件路径: $filepath"
@@ -67,7 +80,26 @@ for filepath in ./*.mp4; do
     if [ -f "$tmpfile" ]; then
         mv "$tmpfile" "$file"
         echo "✅ 完成：$file 已修改并覆盖"
+        success_files=$((success_files + 1))
     else
         echo "❌ 失败：$file 未能成功生成新文件"
     fi
+
+    # 单文件处理结束时间
+    file_end_time=$(date +"%Y-%m-%d %H:%M:%S")
+    file_end_ts=$(date +%s)
+    file_duration=$((file_end_ts - file_start_ts))
+    echo "⏱️ [统计] $file 开始: $file_start_time  结束: $file_end_time  用时: ${file_duration} 秒"
 done
+
+# 记录结束时间
+end_time=$(date +"%Y-%m-%d %H:%M:%S")
+end_ts=$(date +%s)
+duration=$((end_ts - start_ts))
+
+echo "\n📊🕒 ========== 汇总统计 =========="
+echo "🟢 开始时间: $start_time"
+echo "🔴 结束时间: $end_time"
+echo "⏳ 总用时: ${duration} 秒"
+echo "📦 总文件数: $total_files"
+echo "✅ 成功处理: $success_files"
